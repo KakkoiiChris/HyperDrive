@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GLContext;
 
+import net.alexanderdev.hyperdrive.input.Keyboard;
+
 /**
  * @author Christian Bryce Alexander
  * @since Sep 15, 2015, 1:44:49 PM
@@ -35,9 +37,22 @@ public class Display {
 	private String title;
 
 	private long window;
+	
+	private Keyboard keyboard;
+
+	private boolean useKeyboard = false;
+	private boolean useMouse = false;
 
 	public Display() {
 		this(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_TITLE);
+	}
+
+	public Display(int width, int height) {
+		this(width, height, DEFAULT_TITLE);
+	}
+
+	public Display(String title) {
+		this(DEFAULT_WIDTH, DEFAULT_HEIGHT, title);
 	}
 
 	public Display(int width, int height, String title) {
@@ -63,6 +78,9 @@ public class Display {
 
 		glfwMakeContextCurrent(window);
 
+		if (useKeyboard)
+			glfwSetKeyCallback(window, keyboard = new Keyboard(this));
+
 		glfwShowWindow(window);
 
 		run();
@@ -70,6 +88,14 @@ public class Display {
 
 	public void close() {
 
+	}
+
+	public void enableKeyboard(boolean enable) {
+		useKeyboard = enable;
+	}
+	
+	public void enableMouse(boolean enable) {
+		useMouse = enable;
 	}
 
 	public void run() {
@@ -85,6 +111,9 @@ public class Display {
 
 	private void update() {
 		glfwPollEvents();
+		
+		if(keyboard.SPACE.held())
+			System.out.println("YES!!!");
 	}
 
 	private void render() {
